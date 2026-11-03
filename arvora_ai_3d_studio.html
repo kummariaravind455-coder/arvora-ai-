@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARVORA AI — 3D Studio</title>
+<style>
+:root{--bg:#080b14;--panel:#111827;--line:#263247;--text:#edf3ff;--muted:#9aa9c0;--accent:#7c5cff;--cyan:#35d7e8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#18203b 0,#080b14 42%);color:var(--text);font:15px Inter,system-ui,Arial,sans-serif}
+header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);background:#0b1020cc}
+.logo{font-weight:900;letter-spacing:1.5px;font-size:20px}.logo span{color:var(--cyan)}.tag{color:var(--muted);font-size:12px}
+main{max-width:1400px;margin:auto;padding:22px;display:grid;grid-template-columns:250px minmax(0,1fr) 260px;gap:16px}
+.panel{background:#101827eF;border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+h2{font-size:15px;margin:0 0 14px}h3{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px}
+button,select,input{font:inherit}button{border:1px solid #33415a;background:#1a263a;color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
+button:hover{border-color:var(--cyan);background:#20324a}.primary{background:linear-gradient(110deg,#7255f5,#258da8);border:0;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid button{font-size:13px}
+.stage-wrap{display:flex;flex-direction:column;gap:12px;min-width:0}.toolbar{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.toolbar div{display:flex;gap:8px;flex-wrap:wrap}
+#stage{height:min(68vh,650px);min-height:390px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#101a30,#0b1020);position:relative}
+#stage canvas{display:block;width:100%;height:100%}.hint{font-size:12px;color:var(--muted);text-align:center}
+label{display:block;color:var(--muted);font-size:12px;margin:12px 0 6px}input[type=color]{width:100%;height:42px;border:1px solid var(--line);border-radius:9px;background:transparent;padding:4px}input[type=range]{width:100%;accent-color:var(--accent)}
+select{width:100%;padding:10px;background:#0b1220;color:var(--text);border:1px solid var(--line);border-radius:9px}
+#objects{display:flex;flex-direction:column;gap:6px}.obj{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px;border-radius:8px;background:#0b1220;font-size:12px}.obj.active{outline:1px solid var(--cyan)}
+.small{font-size:11px;color:var(--muted);line-height:1.5}.wide{width:100%;margin-top:8px}.danger:hover{border-color:#ff667a}
+footer{color:var(--muted);font-size:11px;text-align:center;padding:0 20px 20px}
+@media(max-width:950px){main{grid-template-columns:1fr 1fr}.stage-wrap{grid-column:1/-1;grid-row:1}#stage{height:55vh}.panel{padding:13px}}
+@media(max-width:560px){header{padding:0 14px}main{padding:12px;display:flex;flex-direction:column}.stage-wrap{order:0}#stage{min-height:330px;height:48vh}.panel{order:1}.toolbar button{padding:8px;font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="logo">ARVORA <span>AI</span></div><div class="tag">3D GRAPHIC DESIGNER · BETA</div></header>
+<main>
+<section class="panel">
+<h2>🧊 Add objects</h2>
+<div class="grid">
+<button data-shape="box">＋ Cube</button><button data-shape="sphere">＋ Sphere</button>
+<button data-shape="cylinder">＋ Cylinder</button><button data-shape="cone">＋ Cone</button>
+<button data-shape="torus">＋ Torus</button><button data-shape="knot">＋ Knot</button>
+</div>
+<h3>Scene objects</h3><div id="objects"></div>
+<button id="delete" class="wide danger">Delete selected</button>
+<p class="small">Select an object from the list. Drag on the stage to orbit; scroll to zoom.</p>
+</section>
+
+<section class="stage-wrap">
+<div class="toolbar">
+<div><button id="reset">Reset view</button><button id="bg">Change background</button></div>
+<div><button id="png" class="primary">Export PNG</button></div>
+</div>
+<div id="stage"><div id="loading" style="padding:24px;color:#b9c8df">Loading 3D workspace…</div></div>
+<div class="hint">Drag to rotate view · Scroll to zoom · Tap an object name to select it</div>
+</section>
+
+<section class="panel">
+<h2>🎨 Object settings</h2>
+<label for="color">Material color</label><input id="color" type="color" value="#7c5cff">
+<label for="scale">Size</label><input id="scale" type="range" min="0.3" max="2.5" step="0.1" value="1">
+<label for="rotate">Rotation</label><input id="rotate" type="range" min="0" max="6.28" step="0.05" value="0">
+<label for="finish">Surface</label><select id="finish"><option value="standard">Standard</option><option value="metal">Metallic</option><option value="glass">Glossy</option></select>
+<h3>Quick actions</h3>
+<button id="duplicate" class="wide">Duplicate object</button>
+<button id="center" class="wide">Center object</button>
+<p class="small">This is a browser-based 3D editor. It works without an AI API and lets you build simple 3D compositions.</p>
+</section>
+</main>
+<footer>ARVORA AI prototype · Your projects stay in this browser session. Export your scene as a PNG image.</footer>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const stage=document.getElementById('stage');
+document.getElementById('loading')?.remove();
+const scene=new THREE.Scene(); scene.background=new THREE.Color('#101a30');
+const camera=new THREE.PerspectiveCamera(45,stage.clientWidth/stage.clientHeight,.1,100);
+camera.position.set(5,4,7);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(stage.clientWidth,stage.clientHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping;
+stage.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
+scene.add(new THREE.HemisphereLight(0xc8ddff,0x25203a,2));
+const key=new THREE.DirectionalLight(0xffffff,3);key.position.set(4,7,5);scene.add(key);
+const rim=new THREE.PointLight(0x35d7e8,30,30);rim.position.set(-4,2,-3);scene.add(rim);
+const grid=new THREE.GridHelper(12,24,0x52617d,0x26334a);grid.position.y=-1.25;scene.add(grid);
+const objects=[];let selected=null;let count=0;
+const makers={
+box:()=>new THREE.BoxGeometry(1.5,1.5,1.5),
+sphere:()=>new THREE.SphereGeometry(.9,40,28),
+cylinder:()=>new THREE.CylinderGeometry(.75,.75,1.7,40),
+cone:()=>new THREE.ConeGeometry(.9,1.8,40),
+torus:()=>new THREE.TorusGeometry(.8,.28,18,80),
+knot:()=>new THREE.TorusKnotGeometry(.65,.22,100,16)
+};
+function material(color='#7c5cff',finish='standard'){
+ return new THREE.MeshStandardMaterial({color,roughness:finish==='metal'?.22:finish==='glass'?.12:.55,metalness:finish==='metal'?.85:.12});
+}
+function addShape(type){
+ const mesh=new THREE.Mesh(makers[type](),material());mesh.position.set((Math.random()-.5)*1.2,0,0);
+ mesh.name=type[0].toUpperCase()+type.slice(1)+' '+(++count);scene.add(mesh);objects.push(mesh);select(mesh);renderList();
+}
+function select(mesh){selected=mesh;document.getElementById('color').value='#'+mesh.material.color.getHexString();document.getElementById('scale').value=mesh.scale.x;document.getElementById('rotate').value=mesh.rotation.y;renderList();}
+function renderList(){
+ const box=document.getElementById('objects');box.innerHTML='';
+ objects.forEach(o=>{const row=document.createElement('div');row.className='obj'+(o===selected?' active':'');const name=document.createElement('span');name.textContent=o.name;const btn=document.createElement('button');btn.textContent='Select';btn.style.padding='5px 8px';btn.onclick=()=>select(o);row.append(name,btn);box.append(row);});
+}
+document.querySelectorAll('[data-shape]').forEach(b=>b.addEventListener('click',()=>addShape(b.dataset.shape)));
+document.getElementById('color').addEventListener('input',e=>{if(selected)selected.material.color.set(e.target.value)});
+document.getElementById('scale').addEventListener('input',e=>{if(selected)selected.scale.setScalar(+e.target.value)});
+document.getElementById('rotate').addEventListener('input',e=>{if(selected)selected.rotation.y=+e.target.value});
+document.getElementById('finish').addEventListener('change',e=>{if(selected){const c='#'+selected.material.color.getHexString();selected.material=material(c,e.target.value)}});
+document.getElementById('delete').onclick=()=>{if(!selected)return;scene.remove(selected);selected.geometry.dispose();selected.material.dispose();objects.splice(objects.indexOf(selected),1);selected=objects.at(-1)||null;renderList();if(selected)select(selected)};
+document.getElementById('duplicate').onclick=()=>{if(!selected)return;const copy=new THREE.Mesh(selected.geometry.clone(),selected.material.clone());copy.position.copy(selected.position).add(new THREE.Vector3(.5,.25,.5));copy.rotation.copy(selected.rotation);copy.scale.copy(selected.scale);copy.name=selected.name+' copy';scene.add(copy);objects.push(copy);select(copy)};
+document.getElementById('center').onclick=()=>{if(selected){selected.position.set(0,0,0);controls.target.set(0,0,0)}};
+document.getElementById('reset').onclick=()=>{camera.position.set(5,4,7);controls.target.set(0,0,0);controls.update()};
+document.getElementById('bg').onclick=()=>{const colors=['#101a30','#202033','#142b2b','#2b1c35','#252525'];const current='#'+scene.background.getHexString();scene.background.set(colors[(colors.indexOf(current)+1)%colors.length]||colors[0])};
+document.getElementById('png').onclick=()=>{renderer.render(scene,camera);const a=document.createElement('a');a.download='arvora-3d-design.png';a.href=renderer.domElement.toDataURL('image/png');a.click()};
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+new ResizeObserver(()=>{const w=stage.clientWidth,h=stage.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}).observe(stage);
+addShape('box');addShape('sphere');objects[1].position.set(1.8,0,0);select(objects[0]);
+</script>
+</body></html>

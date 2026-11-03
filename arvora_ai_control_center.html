@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090a16">
+<title>ARVORA AI — Control Center</title>
+<style>
+:root{--bg:#090a16;--panel:#131529;--panel2:#191d35;--line:#2a2d4b;--text:#f4f3ff;--muted:#a5a7c4;--purple:#9870ff;--cyan:#47dce8;--green:#45d69b;--yellow:#ffc76b;--red:#ff788d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#30205b 0,transparent 42%),var(--bg);color:var(--text);font:14px Inter,system-ui,Arial,sans-serif}
+header{padding:17px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#0a0b18e8;position:sticky;top:0;z-index:4;backdrop-filter:blur(12px)}
+.brand{font-weight:950;font-size:19px;letter-spacing:1px}.brand b{color:var(--cyan)}.subtitle{color:var(--muted);font-size:11px;margin-top:3px}.live{font-size:11px;color:var(--yellow);border:1px solid #65502e;background:#2a2114;padding:7px 10px;border-radius:20px}
+main{max-width:1050px;margin:auto;padding:20px 15px 50px}.welcome h1{font-size:clamp(25px,5vw,36px);margin:6px 0}.welcome p{color:var(--muted);margin:0;line-height:1.55}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.stat,.panel{background:#131529eF;border:1px solid var(--line);border-radius:15px;padding:15px}.stat strong{display:block;font-size:25px;margin-top:7px}.stat span{color:var(--muted);font-size:11px}
+.panel{margin-top:14px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:13px}.panel h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:11px}
+.filters{display:flex;gap:7px;flex-wrap:wrap}.btn,select,input,textarea{font:inherit}.btn{background:#20223d;color:var(--text);border:1px solid #3b3e60;padding:9px 12px;border-radius:10px;cursor:pointer}.btn.primary{background:linear-gradient(105deg,#8056ed,#287f9c);border:0;font-weight:700}.btn:hover{border-color:var(--cyan)}
+.tool-list{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.tool{background:#0e1122;border:1px solid #292d49;border-radius:12px;padding:12px;display:flex;gap:10px;align-items:flex-start}.tool .ico{font-size:22px}.toolmain{flex:1;min-width:0}.tooltop{display:flex;justify-content:space-between;gap:8px;align-items:center}.toolname{font-weight:700}.desc{font-size:11px;color:var(--muted);line-height:1.45;margin-top:5px}.status{font-size:10px;border-radius:20px;padding:5px 8px;white-space:nowrap}.available{color:var(--green);background:#143326}.prototype{color:var(--cyan);background:#123039}.planned{color:var(--yellow);background:#3a2c17}.testing{color:#c5a9ff;background:#2b2045}
+.actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}.actions button{font-size:10px;padding:6px 8px}
+input,select,textarea{width:100%;background:#0c0e1d;color:var(--text);border:1px solid #343752;border-radius:9px;padding:10px;outline:none}label{display:block;color:var(--muted);font-size:11px;margin:10px 0 5px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.formgrid .full{grid-column:1/-1}.hidden{display:none}
+.log{display:flex;gap:10px;border-bottom:1px solid #252943;padding:10px 0}.log:last-child{border:0}.logtime{font-size:10px;color:var(--muted);min-width:82px}.logtext{font-size:12px;line-height:1.5}
+.notice{border:1px solid #66502c;background:#251e14;color:#e8d2a5;border-radius:12px;padding:12px;font-size:11px;line-height:1.55;margin-top:14px}
+.empty{color:var(--muted);font-size:12px;padding:15px;text-align:center}
+footer{text-align:center;color:#777b9b;font-size:10px;padding:0 16px 25px}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}.tool-list{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.formgrid .full{grid-column:auto}.live{font-size:10px}}
+</style>
+</head>
+<body>
+<header><div><div class="brand">ARVORA <b>AI</b></div><div class="subtitle">PROJECT CONTROL CENTER</div></div><div class="live">● TRACKER · LOCAL MODE</div></header>
+<main>
+<section class="welcome"><div class="muted">YOUR PROJECT DASHBOARD</div><h1>Welcome to Control Center 👋</h1><p>Check what we have built, track what works, add new tool ideas and record project updates — from your Android phone.</p></section>
+<section class="stats">
+ <div class="stat"><span>TOTAL TOOLS</span><strong id="total">0</strong></div>
+ <div class="stat"><span>AVAILABLE / PROTOTYPE</span><strong id="ready">0</strong></div>
+ <div class="stat"><span>PLANNED</span><strong id="planned">0</strong></div>
+ <div class="stat"><span>UPDATES LOGGED</span><strong id="updates">0</strong></div>
+</section>
+<section class="panel">
+ <div class="panelhead"><h2>🧰 Tool status</h2><div class="filters"><button class="btn" data-filter="all">All</button><button class="btn" data-filter="ready">Built</button><button class="btn" data-filter="planned">Planned</button></div></div>
+ <div class="tool-list" id="tools"></div>
+</section>
+<section class="panel">
+ <div class="panelhead"><h2>➕ Add a new tool idea</h2><span class="muted">Saved on this device</span></div>
+ <form id="addform" class="formgrid">
+  <div><label>Tool name</label><input id="name" required maxlength="45" placeholder="Example: AI Resume Builder"></div>
+  <div><label>Icon (emoji)</label><input id="icon" maxlength="4" value="✨"></div>
+  <div class="full"><label>What should it do?</label><input id="desc" required maxlength="120" placeholder="Describe the tool in one sentence"></div>
+  <div><label>Current status</label><select id="status"><option value="planned">Planned</option><option value="testing">Testing</option><option value="prototype">Prototype</option><option value="available">Available</option></select></div>
+  <div style="display:flex;align-items:end"><button class="btn primary" style="width:100%">＋ Add tool</button></div>
+ </form>
+</section>
+<section class="panel">
+ <div class="panelhead"><h2>📝 Project update log</h2><span class="muted">Keep a record of changes</span></div>
+ <form id="logform" class="formgrid">
+  <div class="full"><label>What changed today?</label><textarea id="updateText" rows="2" required maxlength="250" placeholder="Example: Tested the 3D editor; PNG export worked."></textarea></div>
+  <div class="full"><button class="btn primary">＋ Save update</button></div>
+ </form>
+ <div id="logs" style="margin-top:12px"></div>
+</section>
+<section class="panel">
+ <div class="panelhead"><h2>💾 Project data</h2></div>
+ <p class="muted">Export a backup before changing phones or clearing browser data. Import a previous backup to restore your tracker.</p>
+ <div class="filters"><button class="btn" id="export">Export backup</button><label class="btn" for="import" style="margin:0;cursor:pointer">Import backup</label><input class="hidden" type="file" id="import" accept="application/json"></div>
+</section>
+<div class="notice"><b>Important — honest status:</b> This dashboard is a local project tracker, not connected to a live ARVORA AI server yet. It cannot automatically confirm whether AI services are running. “Available” means the basic prototype exists; it does not mean a real AI model is connected. We can add automatic live monitoring after we deploy the website and create a secure backend status endpoint.</div>
+</main>
+<footer>ARVORA AI Control Center · Prototype v1 · Data is stored in this browser on this device.</footer>
+<script>
+const initial=[
+{id:1,name:'ARVORA AI Homepage',icon:'🌌',desc:'Mobile-friendly homepage and navigation prototype.',status:'prototype'},
+{id:2,name:'3D Graphic Designer',icon:'🧊',desc:'Basic browser editor: shapes, color, size, rotation and PNG export.',status:'available'},
+{id:3,name:'AI Chat',icon:'💬',desc:'Connect a real AI model for chat responses.',status:'planned'},
+{id:4,name:'AI Writer',icon:'✍️',desc:'Generate drafts, captions and notes with an AI model.',status:'planned'},
+{id:5,name:'AI Translator',icon:'🌐',desc:'Translate text between supported languages.',status:'planned'},
+{id:6,name:'Study Assistant',icon:'📚',desc:'Explain lessons and help organize study notes.',status:'planned'},
+{id:7,name:'Code Helper',icon:'💻',desc:'Explain code and help with beginner programming.',status:'planned'},
+{id:8,name:'AI Image Studio',icon:'🖼️',desc:'Generate images through a connected image service.',status:'planned'},
+{id:9,name:'AI Video Studio',icon:'🎬',desc:'Create video concepts and connect video generation later.',status:'planned'}
+];
+let data=JSON.parse(localStorage.getItem('arvoraControlData')||'null')||{tools:initial,logs:[]};
+let currentFilter='all';
+const $=id=>document.getElementById(id);
+const labels={available:'AVAILABLE · BASIC',prototype:'PROTOTYPE',planned:'PLANNED',testing:'TESTING'};
+function save(){localStorage.setItem('arvoraControlData',JSON.stringify(data));render()}
+function render(){
+ $('total').textContent=data.tools.length;
+ $('ready').textContent=data.tools.filter(t=>['available','prototype'].includes(t.status)).length;
+ $('planned').textContent=data.tools.filter(t=>t.status==='planned').length;
+ $('updates').textContent=data.logs.length;
+ const list=$('tools');list.innerHTML='';
+ const shown=data.tools.filter(t=>currentFilter==='all'||(currentFilter==='ready'?['available','prototype'].includes(t.status):t.status==='planned'));
+ if(!shown.length)list.innerHTML='<div class="empty">No tools in this filter yet.</div>';
+ shown.forEach(t=>{
+  const el=document.createElement('article');el.className='tool';
+  const ico=document.createElement('div');ico.className='ico';ico.textContent=t.icon||'✨';
+  const body=document.createElement('div');body.className='toolmain';
+  const top=document.createElement('div');top.className='tooltop';
+  const name=document.createElement('div');name.className='toolname';name.textContent=t.name;
+  const badge=document.createElement('span');badge.className='status '+t.status;badge.textContent=labels[t.status];
+  top.append(name,badge);
+  const desc=document.createElement('div');desc.className='desc';desc.textContent=t.desc;
+  const actions=document.createElement('div');actions.className='actions';
+  const change=document.createElement('button');change.className='btn';change.textContent='Change status';change.onclick=()=>cycle(t.id);
+  const remove=document.createElement('button');remove.className='btn';remove.textContent='Remove';remove.onclick=()=>{if(confirm('Remove this tool from your tracker?')){data.tools=data.tools.filter(x=>x.id!==t.id);addLog('Removed tool idea: '+t.name);save()}};
+  actions.append(change,remove);body.append(top,desc,actions);el.append(ico,body);list.append(el);
+ });
+ const logs=$('logs');logs.innerHTML='';
+ if(!data.logs.length)logs.innerHTML='<div class="empty">No updates yet. Save your first project update above.</div>';
+ data.logs.slice().reverse().forEach(l=>{const row=document.createElement('div');row.className='log';const time=document.createElement('div');time.className='logtime';time.textContent=l.time;const txt=document.createElement('div');txt.className='logtext';txt.textContent=l.text;row.append(time,txt);logs.append(row)});
+}
+function addLog(text){data.logs.push({time:new Date().toLocaleString(),text})}
+function cycle(id){const t=data.tools.find(x=>x.id===id);const seq=['planned','testing','prototype','available'];t.status=seq[(seq.indexOf(t.status)+1)%seq.length];addLog(t.name+' status changed to '+labels[t.status]+'.');save()}
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{currentFilter=b.dataset.filter;render()});
+$('addform').onsubmit=e=>{e.preventDefault();const t={id:Date.now(),name:$('name').value.trim(),icon:$('icon').value.trim()||'✨',desc:$('desc').value.trim(),status:$('status').value};data.tools.push(t);addLog('Added new tool: '+t.name+'.');e.target.reset();$('icon').value='✨';save()};
+$('logform').onsubmit=e=>{e.preventDefault();addLog($('updateText').value.trim());$('updateText').value='';save()};
+$('export').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='arvora-project-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('import').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const v=JSON.parse(await f.text());if(!Array.isArray(v.tools)||!Array.isArray(v.logs))throw Error();data=v;save();alert('Backup restored.')}catch{alert('That backup file could not be read.')}e.target.value=''};
+render();
+</script>
+</body></html>

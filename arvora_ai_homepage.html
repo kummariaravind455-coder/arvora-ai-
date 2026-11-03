@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080812">
+<title>ARVORA AI — Your AI World</title>
+<style>
+:root{--bg:#080812;--panel:#111225;--panel2:#171a32;--line:#292b49;--text:#f5f4ff;--muted:#a5a5c2;--purple:#9865ff;--cyan:#43e4ee;--pink:#f06bd8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#30205b 0,transparent 42%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+a{color:inherit;text-decoration:none}button,input,textarea{font:inherit}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:15px clamp(16px,5vw,72px);background:#090916df;backdrop-filter:blur(14px);border-bottom:1px solid #292642}
+.brand{font-weight:950;letter-spacing:1.5px;font-size:21px}.brand b{color:var(--cyan)}nav{display:flex;gap:24px;color:var(--muted);font-size:13px}nav a:hover{color:white}.navbtn{border:1px solid #50417b;border-radius:30px;padding:9px 15px;color:#fff;background:#21183b}
+main{max-width:1200px;margin:auto;padding:0 22px}.hero{text-align:center;padding:78px 12px 58px}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #40336c;background:#17122b;padding:8px 13px;border-radius:30px;color:#d3c5ff;font-size:12px}.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+h1{font-size:clamp(38px,7vw,76px);line-height:1.04;letter-spacing:-2.8px;margin:22px auto 16px;max-width:850px}.gradient{background:linear-gradient(95deg,#a985ff,#55e5ef 55%,#f08ae3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{max-width:620px;margin:0 auto;color:var(--muted);font-size:16px;line-height:1.7}.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{border:1px solid #454364;background:#17172c;color:white;padding:12px 18px;border-radius:12px;cursor:pointer;font-weight:650}.btn.primary{background:linear-gradient(105deg,#8056ed,#337fbc);border:0;box-shadow:0 8px 30px #704be444}.btn:hover,.card:hover{transform:translateY(-2px);border-color:#8270d9}
+.preview{max-width:800px;margin:42px auto 0;border:1px solid #383257;border-radius:20px;background:linear-gradient(145deg,#17152c,#101324);padding:18px;text-align:left;box-shadow:0 20px 80px #0008}.previewtop{display:flex;justify-content:space-between;color:#b7b2d1;font-size:12px;margin-bottom:13px}.promptrow{display:flex;gap:10px}.promptrow input{flex:1;min-width:0;background:#0b0d1b;border:1px solid #343450;color:white;border-radius:12px;padding:14px}.promptrow button{white-space:nowrap}.note{font-size:11px;color:#8586a7;margin:10px 2px 0}
+section.content{padding:36px 0 48px}.sectionhead{text-align:center;margin-bottom:24px}.sectionhead h2{font-size:30px;margin:0 0 8px}.sectionhead p{margin:0;color:var(--muted);font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:linear-gradient(145deg,#17182e,#101222);border:1px solid var(--line);border-radius:17px;padding:19px;min-height:160px;transition:.2s;cursor:pointer}.icon{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:#282044;font-size:21px;margin-bottom:15px}.card h3{margin:0 0 7px;font-size:16px}.card p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}.badge{display:inline-block;margin-top:12px;font-size:10px;color:#cfc0ff;background:#292044;border-radius:20px;padding:5px 8px}
+.callout{border:1px solid #40346d;border-radius:20px;background:radial-gradient(circle at 85% 10%,#3b2866,#17152b 55%);padding:28px;display:flex;align-items:center;justify-content:space-between;gap:20px}.callout h2{margin:0 0 8px;font-size:25px}.callout p{margin:0;color:#c1bdd6;font-size:13px;line-height:1.6;max-width:570px}
+footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;color:#8586a7;font-size:11px;line-height:1.8}
+#result{display:none;margin-top:12px;border:1px solid #3b4262;background:#0c1020;border-radius:10px;padding:12px;color:#d8e8ff;font-size:13px;line-height:1.6}
+@media(max-width:760px){nav{display:none}.hero{padding-top:55px}.cards{grid-template-columns:repeat(2,1fr)}.callout{align-items:flex-start;flex-direction:column}}
+@media(max-width:480px){main{padding:0 15px}.cards{grid-template-columns:1fr}.hero{padding-bottom:35px}h1{letter-spacing:-1.5px}.promptrow{flex-direction:column}.promptrow button{width:100%}.sectionhead h2{font-size:25px}}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="#">ARVORA <b>AI</b></a>
+  <nav><a href="#tools">AI Tools</a><a href="#creative">Creative Studio</a><a href="#about">About</a></nav>
+  <a class="navbtn" href="#tools">Explore tools ↗</a>
+</header>
+<main>
+  <section class="hero">
+    <div class="eyebrow"><span class="dot"></span> ONE PLATFORM · MANY POSSIBILITIES</div>
+    <h1>Your AI world,<br><span class="gradient">all in one place.</span></h1>
+    <p class="sub">Turn your ideas into words, learn new things, explore code and create designs — all from one simple workspace.</p>
+    <div class="hero-actions"><a class="btn primary" href="#tools">Explore AI tools →</a><a class="btn" href="#creative">Open Creative Studio</a></div>
+    <div class="preview">
+      <div class="previewtop"><span>✦ ARVORA QUICK PROMPT</span><span>DEMO WORKSPACE</span></div>
+      <div class="promptrow"><input id="prompt" placeholder="What would you like to create today?"><button class="btn primary" id="try">Try it →</button></div>
+      <div id="result"></div>
+      <p class="note">Demo interface only — live AI responses will be connected in a later development stage.</p>
+    </div>
+  </section>
+
+  <section class="content" id="tools">
+    <div class="sectionhead"><h2>Explore AI tools</h2><p>Everyday helpers for learning, writing and building.</p></div>
+    <div class="cards">
+      <a class="card" href="#quick"><div class="icon">💬</div><h3>AI Chat</h3><p>Ask questions, explore ideas and get explanations.</p><span class="badge">PLANNED</span></a>
+      <a class="card" href="#quick"><div class="icon">✍️</div><h3>AI Writer</h3><p>Draft emails, notes, captions and creative content.</p><span class="badge">PLANNED</span></a>
+      <a class="card" href="#quick"><div class="icon">🌐</div><h3>AI Translator</h3><p>Translate text and understand new languages.</p><span class="badge">PLANNED</span></a>
+      <a class="card" href="#quick"><div class="icon">📚</div><h3>Study Assistant</h3><p>Understand topics and organize study notes.</p><span class="badge">PLANNED</span></a>
+      <a class="card" href="#quick"><div class="icon">💻</div><h3>Code Helper</h3><p>Learn programming and understand code examples.</p><span class="badge">PLANNED</span></a>
+      <a class="card" href="#quick"><div class="icon">📄</div><h3>PDF & Notes</h3><p>A future workspace for documents and summaries.</p><span class="badge">PLANNED</span></a>
+    </div>
+  </section>
+
+  <section class="content" id="creative">
+    <div class="sectionhead"><h2>Creative Studio</h2><p>Bring visual ideas to life with creative tools.</p></div>
+    <div class="cards">
+      <a class="card" href="arvora_ai_3d_studio.html"><div class="icon">🧊</div><h3>3D Graphic Designer</h3><p>Create and arrange simple 3D shapes in the browser.</p><span class="badge">BASIC EDITOR AVAILABLE</span></a>
+      <a class="card" href="#quick"><div class="icon">🖼️</div><h3>AI Image Studio</h3><p>Plan image concepts and creative prompts.</p><span class="badge">PLANNED</span></a>
+      <a class="card" href="#quick"><div class="icon">🎬</div><h3>AI Video Studio</h3><p>Prepare video concepts and storyboards.</p><span class="badge">PLANNED</span></a>
+    </div>
+  </section>
+
+  <section class="content" id="quick">
+    <div class="callout"><div><h2>Start with one idea.</h2><p>ARVORA AI is an early prototype. We are building the tools step by step, testing them on mobile and adding real AI connections after the foundation is ready.</p></div><a class="btn primary" href="#tools">Explore tools ↗</a></div>
+  </section>
+  <section class="content" id="about"><div class="sectionhead"><h2>Built for curious minds</h2><p>A simple, mobile-friendly starting point for an all-in-one AI workspace.</p></div></section>
+</main>
+<footer>© 2026 ARVORA AI · Early prototype<br>Some tools are planned and are not active yet. No subscriptions or payments are enabled in this demo.</footer>
+<script>
+const input=document.getElementById('prompt'),result=document.getElementById('result');
+document.getElementById('try').addEventListener('click',()=>{const value=input.value.trim();result.style.display='block';result.textContent=value?'Your idea: “'+value+'” — Prompt workspace preview. Live AI generation is not connected yet.':'Type an idea in the box first. This demo will preview your prompt.';});
+input.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('try').click()});
+</script>
+</body>
+</html>
